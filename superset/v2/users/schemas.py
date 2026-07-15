@@ -18,6 +18,28 @@
 from marshmallow import fields, Schema, validate, validates_schema, ValidationError
 
 
+class UserLoginSchema(Schema):
+    """Validate public database login requests."""
+
+    username = fields.String(
+        required=True,
+        validate=validate.Length(min=1, max=256),
+    )
+    password = fields.String(
+        required=True,
+        load_only=True,
+        validate=validate.Length(min=1, max=256),
+    )
+
+
+class UserLoginResponseSchema(Schema):
+    """Describe a successful user login response."""
+
+    id = fields.Integer(required=True)
+    username = fields.String(required=True)
+    message = fields.String(required=True)
+
+
 class UserRegistrationSchema(Schema):
     """Validate public user registration requests."""
 

@@ -20,11 +20,13 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from flask import request, Response
+from flask import current_app, request, Response
 from flask_appbuilder.api import expose, safe
+from flask_appbuilder.const import AUTH_DB
+from flask_login import login_user
 from marshmallow import ValidationError
 
-from superset.extensions import event_logger
+from superset.extensions import event_logger, security_manager
 from superset.v2.users.commands.register import (
     RegisterUserCommand,
     UserAlreadyExistsError,
@@ -36,6 +38,8 @@ from superset.v2.users.commands.send_verification_code import (
     SendVerificationCodeCommand,
 )
 from superset.v2.users.schemas import (
+    UserLoginResponseSchema,
+    UserLoginSchema,
     UserRegistrationResponseSchema,
     UserRegistrationSchema,
     VerificationCodeRequestSchema,
@@ -57,6 +61,65 @@ class UserRegistrationRestApi(BaseSupersetApi):
     resource_name = "v2/users"
     allow_browser_login = True
     openapi_spec_tag = "Users"
+
+    @expose("/login/", methods=("POST",))
+    @safe
+    @statsd_metrics
+    @requires_json
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: "UserRegistrationRestApi.login",
+        object_ref=False,
+        log_to_statsd=False,
+    )
+    def login(self) -> Response:
+        """Authenticate a database user and establish a browser session.
+        ---
+        post:
+          summary: Log in a database-authenticated user
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  UserLoginSchema
+          responses:
+            200:
+              description: User logged in
+              content:
+                application/json:
+                  schema:
+                    UserLoginResponseSchema
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              description: Invalid username or password
+            403:
+              $ref: '#/components/responses/403'
+        """
+        try:
+            data: dict[str, Any] = UserLoginSchema().load(request.json)
+        except ValidationError as ex:
+            return self.response_400(message=ex.messages)
+
+        if current_app.config["AUTH_TYPE"] != AUTH_DB:
+            return self.response_403(message="Database login is disabled.")
+
+        user = security_manager.auth_user_db(data["username"], data["password"])
+        if not user:
+            return self.response(401, message="Invalid username or password.")
+
+        login_user(user, remember=False)
+        security_manager.on_user_login(user)
+
+        result = {
+            "id": user.id,
+            "username": user.username,
+            "message": "Login successful.",
+        }
+        return self.response(
+            200,
+            result=UserLoginResponseSchema().dump(result),
+        )
 
     @expose("/verification-code/", methods=("POST",))
     @safe

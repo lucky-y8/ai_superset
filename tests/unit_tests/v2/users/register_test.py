@@ -261,3 +261,45 @@ def test_verification_code_api_handles_delivery_errors(
     )
 
     assert response.status_code == status_code
+
+def test_login_api_authenticates_user(client: Any, mocker: Any) -> None:
+    """A valid database login establishes a browser session."""
+    current_app.config["AUTH_TYPE"] = AUTH_DB
+    user = MagicMock(id=7, username="admin")
+    security_manager = mocker.patch("superset.v2.users.api.security_manager")
+    login_user = mocker.patch("superset.v2.users.api.login_user")
+    security_manager.auth_user_db.return_value = user
+
+    response = client.post(
+        "/api/v1/v2/users/login/",
+        json={"username": "admin", "password": "admin1234"},
+    )
+
+    assert response.status_code == 200
+    assert response.json["result"] == {
+        "id": 7,
+        "message": "Login successful.",
+        "username": "admin",
+    }
+    security_manager.auth_user_db.assert_called_once_with("admin", "admin1234")
+    login_user.assert_called_once_with(user, remember=False)
+    security_manager.on_user_login.assert_called_once_with(user)
+
+
+def test_login_api_rejects_invalid_credentials(client: Any, mocker: Any) -> None:
+    """Invalid credentials do not establish a browser session."""
+    current_app.config["AUTH_TYPE"] = AUTH_DB
+    security_manager = mocker.patch("superset.v2.users.api.security_manager")
+    login_user = mocker.patch("superset.v2.users.api.login_user")
+    security_manager.auth_user_db.return_value = None
+
+    response = client.post(
+        "/api/v1/v2/users/login/",
+        json={"username": "admin", "password": "wrong"},
+    )
+
+    assert response.status_code == 401
+    assert response.json["message"] == "Invalid username or password."
+    security_manager.auth_user_db.assert_called_once_with("admin", "wrong")
+    login_user.assert_not_called()
+    security_manager.on_user_login.assert_not_called()

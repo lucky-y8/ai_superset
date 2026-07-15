@@ -19,13 +19,30 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Form } from '@superset-ui/core/components';
-import { SupersetClient } from '@superset-ui/core';
+import { getClientErrorObject, SupersetClient } from '@superset-ui/core';
 import { t } from '@apache-superset/core/translation';
 import { addDangerToast } from 'src/components/MessageToasts/actions';
 import getBootstrapData from 'src/utils/getBootstrapData';
 
 import type { LoginFormValues, ActiveTab } from './types';
 import { AuthType } from './types';
+
+function getSafeRedirectUrl(nextUrl: string) {
+  if (!nextUrl) {
+    return '/';
+  }
+
+  try {
+    const url = new URL(nextUrl, window.location.origin);
+    if (url.origin === window.location.origin) {
+      return `${url.pathname}${url.search}${url.hash}`;
+    }
+  } catch {
+    return '/';
+  }
+
+  return '/';
+}
 
 export function useAuthConfig() {
   const bootstrapData = getBootstrapData();
@@ -51,11 +68,6 @@ export function useLoginForm() {
     }
   }, []);
 
-  const loginEndpoint = useMemo(
-    () => (nextUrl ? `/login/?next=${encodeURIComponent(nextUrl)}` : '/login/'),
-    [nextUrl],
-  );
-
   const buildProviderLoginUrl = useCallback(
     (providerName: string) => {
       const base = `/login/${providerName}`;
@@ -66,21 +78,54 @@ export function useLoginForm() {
     [nextUrl],
   );
 
-  useEffect(() => {
-    if (sessionStorage.getItem('login_attempted') === 'true') {
-      sessionStorage.removeItem('login_attempted');
-      dispatch(addDangerToast(t('Invalid username or password')));
-      form.setFieldsValue({ password: '' });
-    }
-  }, [dispatch, form]);
+  const showLoginError = useCallback(
+    async (error: unknown) => {
+      let message = t('Invalid username or password');
+      try {
+        const clientError = await getClientErrorObject(
+          error as Parameters<typeof getClientErrorObject>[0],
+        );
+        if (clientError.error) {
+          message = clientError.error;
+        } else if (clientError.message) {
+          message = clientError.message;
+        }
+      } catch {
+        if (error instanceof Error && error.message) {
+          message = error.message;
+        }
+      }
+
+      form.setFields([
+        {
+          name: 'password',
+          errors: [message],
+        },
+      ]);
+      dispatch(addDangerToast(message));
+    },
+    [dispatch, form],
+  );
 
   const onFinish = useCallback(
-    (values: LoginFormValues) => {
+    async (values: LoginFormValues) => {
       setLoading(true);
-      sessionStorage.setItem('login_attempted', 'true');
-      SupersetClient.postForm(loginEndpoint, values, '');
+      form.setFields([{ name: 'password', errors: [] }]);
+
+      try {
+        await SupersetClient.post({
+          endpoint: '/api/v1/v2/users/login/',
+          jsonPayload: values,
+          ignoreUnauthorized: true,
+        });
+        window.location.assign(getSafeRedirectUrl(nextUrl));
+      } catch (error) {
+        await showLoginError(error);
+        form.setFieldsValue({ password: '' });
+        setLoading(false);
+      }
     },
-    [loginEndpoint],
+    [form, nextUrl, showLoginError],
   );
 
   return { form, loading, onFinish, buildProviderLoginUrl };

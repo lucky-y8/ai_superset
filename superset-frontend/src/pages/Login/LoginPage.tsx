@@ -39,7 +39,7 @@ const PageShell = styled.main`
 
   position: fixed;
   inset: 0;
-  z-index: 2147483000;
+  z-index: 1;
   min-height: 100vh;
   overflow: hidden;
   color: var(--login-text);
@@ -287,7 +287,8 @@ export function getInitialTheme(date = new Date()): 'dark' | 'light' {
 
 export default function LoginPage() {
   const { authType, providers } = useAuthConfig();
-  const { form, loading, onFinish, buildProviderLoginUrl } = useLoginForm();
+  const { form, loading, errorMessage, onFinish, buildProviderLoginUrl } =
+    useLoginForm();
   const { activeTab, setActiveTab } = useLoginTab('login');
   const [theme, setTheme] = useState<'dark' | 'light'>(getInitialTheme);
 
@@ -345,7 +346,12 @@ export default function LoginPage() {
                     ))}
                   </ProviderList>
                 )}
-                <LoginForm form={form} loading={loading} onFinish={onFinish} />
+                <LoginForm
+                  form={form}
+                  loading={loading}
+                  errorMessage={errorMessage}
+                  onFinish={onFinish}
+                />
               </>
             )}
 

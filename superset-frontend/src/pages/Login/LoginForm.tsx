@@ -25,6 +25,7 @@ import type { LoginFormValues } from './types';
 type LoginFormProps = {
   form: ReturnType<typeof Form.useForm>[0];
   loading: boolean;
+  errorMessage?: string;
   onFinish: (values: LoginFormValues) => void;
 };
 
@@ -94,6 +95,16 @@ const StyledForm = styled(Form)`
   }
 `;
 
+const ErrorMessage = styled.div`
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid #fb7185;
+  border-radius: 8px;
+  background: rgba(190, 18, 60, 0.16);
+  color: var(--login-text);
+  line-height: 1.5;
+`;
+
 const Instruction = styled.p`
   position: absolute;
   width: 1px;
@@ -106,7 +117,12 @@ const Instruction = styled.p`
   border: 0;
 `;
 
-export default function LoginForm({ form, loading, onFinish }: LoginFormProps) {
+export default function LoginForm({
+  form,
+  loading,
+  errorMessage,
+  onFinish,
+}: LoginFormProps) {
   return (
     <StyledForm
       form={form}
@@ -140,6 +156,8 @@ export default function LoginForm({ form, loading, onFinish }: LoginFormProps) {
           placeholder="密码"
         />
       </Form.Item>
+
+      {errorMessage && <ErrorMessage role="alert">{errorMessage}</ErrorMessage>}
 
       <Button
         aria-label="Sign in"
