@@ -277,12 +277,12 @@ HASH_ALGORITHM_FALLBACKS: list[Literal["md5", "sha256"]] = ["md5"]
 SECRET_KEY = os.environ.get("SUPERSET_SECRET_KEY") or CHANGE_ME_SECRET_KEY
 
 # The SQLAlchemy connection string.
-SQLALCHEMY_DATABASE_URI = (
-    f"""sqlite:///{os.path.join(DATA_DIR, "superset.db")}?check_same_thread=false"""
-)
+# SQLALCHEMY_DATABASE_URI = (
+#     f"""sqlite:///{os.path.join(DATA_DIR, "superset.db")}?check_same_thread=false"""
+# )
 
 # SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
-# SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
+SQLALCHEMY_DATABASE_URI = "postgresql://superset:superset@127.0.0.1:5433/superset"
 
 # This config is exposed through flask-sqlalchemy, and can be used to set your metadata
 # database connection settings. You can use this to set arbitrary connection settings
@@ -443,7 +443,7 @@ APP_ICON = "/static/assets/images/superset-logo-horiz.png"
 # or you can specify a full URL e.g. 'https://foo.bar'
 # NOTE: Overriding this in superset_config.py automatically updates the logo link
 # (THEME_DEFAULT["token"]["brandLogoHref"]); see sync_theme_logo_href below.
-LOGO_TARGET_PATH = None
+LOGO_TARGET_PATH = "/welcome"
 
 # When True, hide the navbar logo.
 HIDE_NAVBAR_LOGO: bool = False
@@ -492,11 +492,16 @@ AUTH_TYPE = AUTH_DB
 # AUTH_ROLE_PUBLIC = 'Public'
 
 # Will allow user self registration
-# AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION = True
 
 # The default user self registration role
-# AUTH_USER_REGISTRATION_ROLE = "Public"
+AUTH_USER_REGISTRATION_ROLE = "Gamma"
 
+AUTH_USER_REGISTRATION_ROLE_LIST = [
+    "Gamma",
+    "sql_lab",
+    "SelfServiceCreator",
+]
 # When using LDAP Auth, setup the LDAP server
 # AUTH_LDAP_SERVER = "ldap://ldapserver.new"
 
@@ -517,44 +522,42 @@ PUBLIC_ROLE_LIKE: str | None = None
 # Babel config for translations
 # ---------------------------------------------------
 # Setup default language
-BABEL_DEFAULT_LOCALE = "en"
+BABEL_DEFAULT_LOCALE = "zh"
 # Your application default translation path
 BABEL_DEFAULT_FOLDER = "superset/translations"
 # The allowed translation for your app
 LANGUAGES = {
-    "en": {"flag": "us", "name": "English"},
-    "es": {"flag": "es", "name": "Spanish"},
-    "it": {"flag": "it", "name": "Italian"},
-    "fr": {"flag": "fr", "name": "French"},
     "zh": {"flag": "cn", "name": "Chinese"},
-    "zh_TW": {"flag": "tw", "name": "Traditional Chinese"},
-    "ja": {"flag": "jp", "name": "Japanese"},
-    "de": {"flag": "de", "name": "German"},
-    "pl": {"flag": "pl", "name": "Polish"},
-    "pt": {"flag": "pt", "name": "Portuguese"},
-    "pt_BR": {"flag": "br", "name": "Brazilian Portuguese"},
-    "ru": {"flag": "ru", "name": "Russian"},
-    "ko": {"flag": "kr", "name": "Korean"},
-    "cs": {"flag": "cz", "name": "Czech"},
-    "sk": {"flag": "sk", "name": "Slovak"},
-    "sl": {"flag": "si", "name": "Slovenian"},
-    "sr": {"flag": "rs", "name": "Serbian (Cyrillic)"},
-    "sr_Latn": {"flag": "rs", "name": "Serbian (Latin)"},
-    "lv": {"flag": "lv", "name": "Latvian"},
-    "nl": {"flag": "nl", "name": "Dutch"},
-    "uk": {"flag": "ua", "name": "Ukrainian"},
-    "mi": {"flag": "nz", "name": "Māori"},
-    "ro": {"flag": "ro", "name": "Romanian"},
-    "ar": {"flag": "sa", "name": "Arabic"},
-    "ca": {"flag": "es", "name": "Catalan"},
-    "fa": {"flag": "ir", "name": "Persian"},
-    "fi": {"flag": "fi", "name": "Finnish"},
-    "th": {"flag": "th", "name": "Thai"},
-    "tr": {"flag": "tr", "name": "Turkish"},
+    "en": {"flag": "us", "name": "English"},
+    # "es": {"flag": "es", "name": "Spanish"},
+    # "it": {"flag": "it", "name": "Italian"},
+    # "fr": {"flag": "fr", "name": "French"},
+    # "zh_TW": {"flag": "tw", "name": "Traditional Chinese"},
+    # "ja": {"flag": "jp", "name": "Japanese"},
+    # "de": {"flag": "de", "name": "German"},
+    # "pl": {"flag": "pl", "name": "Polish"},
+    # "pt": {"flag": "pt", "name": "Portuguese"},
+    # "pt_BR": {"flag": "br", "name": "Brazilian Portuguese"},
+    # "ru": {"flag": "ru", "name": "Russian"},
+    # "ko": {"flag": "kr", "name": "Korean"},
+    # "cs": {"flag": "cz", "name": "Czech"},
+    # "sk": {"flag": "sk", "name": "Slovak"},
+    # "sl": {"flag": "si", "name": "Slovenian"},
+    # "lv": {"flag": "lv", "name": "Latvian"},
+    # "nl": {"flag": "nl", "name": "Dutch"},
+    # "uk": {"flag": "ua", "name": "Ukrainian"},
+    # "mi": {"flag": "nz", "name": "Māori"},
+    # "ro": {"flag": "ro", "name": "Romanian"},
+    # "ar": {"flag": "sa", "name": "Arabic"},
+    # "ca": {"flag": "es", "name": "Catalan"},
+    # "fa": {"flag": "ir", "name": "Persian"},
+    # "fi": {"flag": "fi", "name": "Finnish"},
+    # "th": {"flag": "th", "name": "Thai"},
+    # "tr": {"flag": "tr", "name": "Turkish"},
 }
 # Turning off i18n by default as translation in most languages are
 # incomplete and not well maintained.
-LANGUAGES = {}
+# LANGUAGES = {}
 
 
 # Override the default d3 locale format
@@ -847,7 +850,7 @@ DEFAULT_FEATURE_FLAGS: dict[str, bool] = {
     # When enabled, resources can have explicit viewer Subject assignments.
     # @lifecycle: testing
     # @category: security
-    "ENABLE_VIEWERS": False,
+    "ENABLE_VIEWERS": True,
     # Supports simultaneous data and dashboard virtualization for backend performance
     # @lifecycle: stable
     # @category: runtime_config
@@ -855,12 +858,12 @@ DEFAULT_FEATURE_FLAGS: dict[str, bool] = {
     # Data panel closed by default in chart builder
     # @lifecycle: stable
     # @category: runtime_config
-    "DATAPANEL_CLOSED_BY_DEFAULT": False,
+    "DATAPANEL_CLOSED_BY_DEFAULT": True,
     # Hide the logout button in embedded contexts (e.g., when using SSO in iframes)
     # @lifecycle: stable
     # @category: runtime_config
     # @docs: https://superset.apache.org/docs/configuration/networking-settings#hiding-the-logout-button-in-embedded-contexts
-    "DISABLE_EMBEDDED_SUPERSET_LOGOUT": False,
+    "DISABLE_EMBEDDED_SUPERSET_LOGOUT": True,
     # Enable drill-by functionality in charts
     # @lifecycle: stable
     # @category: runtime_config
@@ -917,7 +920,7 @@ DEFAULT_FEATURE_FLAGS: dict[str, bool] = {
     # @lifecycle: stable
     # @category: runtime_config
     # @docs: https://superset.apache.org/docs/configuration/cache
-    "THUMBNAILS": False,
+    "THUMBNAILS": True,
     # =================================================================
     # STABLE - INTERNAL/ADMIN
     # =================================================================
@@ -1337,13 +1340,46 @@ UPLOAD_MAX_FILE_SIZE_BYTES: int | None = 100 * 1024 * 1024
 # Default cache timeout, applies to all cache backends unless specifically overridden in
 # each cache config.
 CACHE_DEFAULT_TIMEOUT = int(timedelta(days=1).total_seconds())
-
+SUPERSET_REDIS_HOST = "127.0.0.1"
+SUPERSET_REDIS_PORT = "6379"
+SUPERSET_REDIS_PASSWORD = "Yanilo315*"
+SUPERSET_REDIS_DB = 1
 # Default cache for Superset objects
-CACHE_CONFIG: CacheConfig = {"CACHE_TYPE": "NullCache"}
-
+# CACHE_CONFIG: CacheConfig = {"CACHE_TYPE": "NullCache"}
+CACHE_CONFIG: CacheConfig = {
+    "CACHE_TYPE": "redis",
+    "CACHE_DEFAULT_TIMEOUT": 60 * 60 * 24,  # 一天的缓存 即 60秒 * 60 * 24小时
+    "CACHE_KEY_PREFIX": "superset_cache",
+    "CACHE_REDIS_HOST": SUPERSET_REDIS_HOST,
+    "CACHE_REDIS_PORT": SUPERSET_REDIS_PORT,
+    "CACHE_REDIS_DB": SUPERSET_REDIS_DB,
+    "CACHE_REDIS_URL": "redis://:"
+    + SUPERSET_REDIS_PASSWORD
+    + "@"
+    + SUPERSET_REDIS_HOST
+    + ":"
+    + SUPERSET_REDIS_PORT
+    + "/"
+    + str(SUPERSET_REDIS_DB),
+}
 # Cache for datasource metadata and query results
-DATA_CACHE_CONFIG: CacheConfig = {"CACHE_TYPE": "NullCache"}
-
+# DATA_CACHE_CONFIG: CacheConfig = {"CACHE_TYPE": "NullCache"}
+DATA_CACHE_CONFIG: CacheConfig = {
+    "CACHE_TYPE": "redis",
+    "CACHE_DEFAULT_TIMEOUT": 60 * 60 * 24,  # 一天的缓存 即 60秒 * 60 * 24小时
+    "CACHE_KEY_PREFIX": "superset_data_cache",
+    "CACHE_REDIS_HOST": SUPERSET_REDIS_HOST,
+    "CACHE_REDIS_PORT": SUPERSET_REDIS_PORT,
+    "CACHE_REDIS_DB": SUPERSET_REDIS_DB,
+    "CACHE_REDIS_URL": "redis://:"
+    + SUPERSET_REDIS_PASSWORD
+    + "@"
+    + SUPERSET_REDIS_HOST
+    + ":"
+    + SUPERSET_REDIS_PORT
+    + "/"
+    + str(SUPERSET_REDIS_DB),
+}
 # Cache for dashboard filter state. `CACHE_TYPE` defaults to `SupersetMetastoreCache`
 # that stores the values in the key-value table in the Superset metastore, as it's
 # required for Superset to operate correctly, but can be replaced by any
@@ -2397,7 +2433,7 @@ WEBDRIVER_CONFIGURATION = {
 WEBDRIVER_OPTION_ARGS = ["--headless"]
 
 # The base URL to query for accessing the user interface
-WEBDRIVER_BASEURL = "http://0.0.0.0:8080/"
+WEBDRIVER_BASEURL = "http://localhost:9000/"
 # The base URL for the email report hyperlinks.
 WEBDRIVER_BASEURL_USER_FRIENDLY = WEBDRIVER_BASEURL
 # Time selenium will wait for the page to load and render for the email report.
@@ -2536,6 +2572,10 @@ TALISMAN_CONFIG = {
             "https://tiles.versatiles.org",
             "https://*.protomaps.com",
             "https://*.maplibre.org",
+            "http://localhost:9003",
+            "ws://localhost:9003",
+            "http://rosm.top:9003",
+            "ws://rosm.top:9003",
         ],
         "object-src": "'none'",
         "style-src": [
@@ -2715,7 +2755,7 @@ GLOBAL_ASYNC_QUERIES_CACHE_BACKEND = {
     "CACHE_REDIS_HOST": "localhost",
     "CACHE_REDIS_PORT": 6379,
     "CACHE_REDIS_USER": "",
-    "CACHE_REDIS_PASSWORD": "",
+    "CACHE_REDIS_PASSWORD": "Yanilo315*",
     "CACHE_REDIS_DB": 0,
     "CACHE_DEFAULT_TIMEOUT": 300,
     "CACHE_REDIS_SENTINELS": [("localhost", 26379)],
@@ -3086,3 +3126,39 @@ for env_var in ENV_VAR_KEYS:
 # users set just LOGO_TARGET_PATH without also overriding the whole theme.
 sync_theme_logo_href(THEME_DEFAULT, LOGO_TARGET_PATH)
 sync_theme_logo_href(THEME_DARK, LOGO_TARGET_PATH)
+
+MCP_DEV_USERNAME = "admin"
+
+FAB_API_MAX_PAGE_SIZE = 1000
+
+MCP_TOOL_SEARCH_CONFIG = {
+    "enabled": False,
+}
+
+RECAPTCHA_PUBLIC_KEY = "test-key"
+
+
+# smtp 服务配置
+EMAIL_NOTIFICATIONS = True  # all the emails are sent using dryrun
+SMTP_HOST = "smtp.qq.com"
+SMTP_STARTTLS = False
+SMTP_SSL = True
+SMTP_USER = "xiao3952@foxmail.com"
+SMTP_PORT = 465
+SMTP_PASSWORD = "kqfqavwwqppdbjhi"
+SMTP_MAIL_FROM = "xiao3952@foxmail.com"
+
+
+MCP_AUTH_ENABLED = True
+MCP_JWT_ISSUER = "superset"
+MCP_JWT_AUDIENCE = "superset-agent-service"
+MCP_JWT_ALGORITHM = "HS256"
+_base_secret_key = str(globals().get("SECRET_KEY", os.getenv("SECRET_KEY", ""))).encode()
+import hashlib
+MCP_JWT_SECRET = hashlib.sha256(_base_secret_key + b":v2-ai-agent-token").hexdigest()
+# Do not fall back to a development admin user when JWT auth fails.
+# JWT ???????????? admin ???
+
+MCP_DEV_USERNAME = None
+MCP_JWT_DEBUG_ERRORS = True
+AI_AGENT_TOKEN_TTL_SECONDS=36000000

@@ -1421,6 +1421,41 @@ def test_connections_source_type_filter(
 
 
 @SEMANTIC_LAYERS_APP
+def test_connections_database_uses_standard_access_filter(
+    client: Any,
+    full_api_access: None,
+    mocker: MockerFixture,
+) -> None:
+    """Test database connections use Superset's standard access filter."""
+    mock_db_session = mocker.patch("superset.semantic_layers.api.db.session")
+    db_query = MagicMock()
+    db_query.options.return_value = db_query
+    db_query.all.return_value = []
+    mock_db_session.query.return_value = db_query
+
+    database_filter = mocker.patch(
+        "superset.semantic_layers.api.DatabaseFilter",
+    )
+    database_filter.return_value.apply.return_value = db_query
+    mocker.patch(
+        "superset.semantic_layers.api.is_feature_enabled",
+        return_value=True,
+    )
+
+    import prison as rison_lib
+
+    q = rison_lib.dumps(
+        {"filters": [{"col": "source_type", "opr": "eq", "value": "database"}]}
+    )
+    response = client.get(f"/api/v1/semantic_layer/connections/?q={q}")
+
+    assert response.status_code == 200
+    database_filter.assert_called_once()
+    assert database_filter.call_args.args[0] == "id"
+    database_filter.return_value.apply.assert_called_once_with(db_query, None)
+
+
+@SEMANTIC_LAYERS_APP
 def test_connections_source_type_semantic_layer_only(
     client: Any,
     full_api_access: None,

@@ -101,6 +101,8 @@ from superset.utils.core import (
 from superset.utils.decorators import transaction
 from superset.utils.filters import get_dataset_access_filters
 from superset.utils.urls import get_url_host
+from superset.security.permission_view_translations import PERMISSION_VIEW_TRANSLATIONS, \
+    get_request_lang, translate_permission_view
 
 if TYPE_CHECKING:
     from superset.common.query_context import QueryContext
@@ -522,6 +524,126 @@ class SupersetPermissionViewMenuApi(PermissionViewMenuApi):
             if col not in self._filters.search_columns:
                 self._filters.search_columns.append(col)
 
+    def get_list_headless(self, **kwargs):
+        """
+        Superset / FAB 权限视图列表接口（增强版）
+
+        =========================
+        📌 功能说明
+        =========================
+        该方法基于 Superset 原生 get_list_headless 进行扩展，
+        在不破坏原有 API 结构的前提下，增加“权限 + view_menu”的国际化支持（i18n）。
+
+        主要能力：
+        1. 调用父类接口获取权限-菜单列表数据
+        2. 根据当前请求语言（zh/en/ja）判断是否需要做翻译
+        3. 仅在支持语言时对 result 进行增强处理（性能优化）
+        4. 生成 permission + view_menu 的中文（或其他语言）映射字典
+        5. 在原始响应中新增字段 permission_view_i18n
+
+        =========================
+        📌 触发条件
+        =========================
+        - 当请求语言属于 PERMISSION_VIEW_TRANSLATIONS 支持范围时才启用翻译逻辑
+        - 否则直接返回 Superset 原始结果（zero cost return）
+
+        =========================
+        📌 参数说明
+        =========================
+        kwargs:
+            Superset FAB 自动传入的查询参数（分页 / 排序 / filter / rison等）
+
+        =========================
+        📌 返回结构
+        =========================
+        Response (JSON):
+
+        {
+            "count": int,
+            "result": [...],
+            "ids": [...],
+            "label_columns": {...},
+            ...
+            "permission_view_i18n": {
+                "can_read Dashboard": "查看仪表盘"
+            }
+        }
+
+        =========================
+        📌 核心设计点
+        =========================
+        1. 非支持语言直接 return super()（避免 JSON 解析开销）
+        2. 只对 zh/en/ja 等语言做扩展处理
+        3. 不修改 Superset 原始字段结构（兼容升级）
+        4. 仅新增 i18n 字段，不污染 result
+
+        =========================
+        📌 注意事项
+        =========================
+        - 不允许修改 result / ids / list_columns 等原始字段结构
+        - permission + view_menu 必须同时存在，否则跳过
+        - translation 字典需提前维护，否则返回空映射
+        - 建议 key 使用稳定格式：permission + view_menu
+
+        =========================
+        📌 性能优化点
+        =========================
+        - 非支持语言：直接 return super()（避免 JSON parsing）
+        - 支持语言：才进行 get_json + 遍历处理
+        - 避免每次请求重复计算 translation（可进一步缓存优化）
+
+        """
+
+        # 1. 获取当前请求语言
+        lang = get_request_lang()
+        PERMISSION_VIEW_TRANSLATIONS = []
+        # 2. 非支持语言直接返回父类结果（性能关键点）
+        if lang not in PERMISSION_VIEW_TRANSLATIONS:
+            return super().get_list_headless(**kwargs)
+
+        # 3. 调用父类方法获取原始数据
+        result = super().get_list_headless(**kwargs)
+
+        # 4. 安全解析 JSON 数据
+        data = result.get_json(silent=True)
+
+        # 5. fallback：防止返回 HTML / 非 JSON（如登录失效）
+        if data is None:
+            try:
+                data = json.loads(result.get_data(as_text=True))
+            except Exception:
+                return result
+
+        # 6. 构建 i18n 映射结果
+        view_translations_dict = {}
+
+        for item in data.get("result", []):
+
+            # 安全获取 permission name
+            permission = (item.get("permission") or {}).get("name", "")
+
+            # 安全获取 view_menu name
+            view_menu = (item.get("view_menu") or {}).get("name", "")
+
+            # 数据不完整直接跳过
+            if not permission or not view_menu:
+                continue
+
+            # 构建唯一 key（用于翻译匹配）
+            key = f"{permission} {view_menu}"
+
+            # 查询对应语言翻译
+            translation = translate_permission_view(lang, key)
+
+            # 如果存在翻译则加入结果集
+            if translation:
+                view_translations_dict[key] = translation
+
+        # 7. 在原始数据上追加 i18n 字段（不破坏原结构）
+        data["permission_view_i18n"] = view_translations_dict
+
+        # 8. 返回标准 Superset API response
+        return self.response(200, **data)
 
 # Limiting routes on FAB model views
 PermissionViewModelView.include_route_methods = {RouteMethod.LIST}
@@ -1514,6 +1636,11 @@ class SupersetSecurityManager(  # pylint: disable=too-many-public-methods
             self.can_access_all_datasources()
             or self.can_access_all_databases()
             or self.can_access("database_access", database.perm)
+            or (
+                hasattr(g, "user")
+                and not g.user.is_anonymous
+                and database.created_by_fk == g.user.id
+            )
         )
 
     def can_access_catalog(self, database: "Database", catalog: str) -> bool:

@@ -16,6 +16,7 @@
 # under the License.
 from typing import Any, Optional
 
+from flask import g
 from flask_appbuilder import Model
 from sqlalchemy import and_, false, or_
 from sqlalchemy.sql.elements import BooleanClauseList, ColumnElement
@@ -33,12 +34,16 @@ def get_dataset_access_filters(
     perms = security_manager.user_view_menu_names("datasource_access")
     schema_perms = security_manager.user_view_menu_names("schema_access")
     catalog_perms = security_manager.user_view_menu_names("catalog_access")
+    owner_filters = []
+    if hasattr(g, "user") and not g.user.is_anonymous:
+        owner_filters.append(base_model.created_by_fk == g.user.id)
 
     return or_(
         Database.id.in_(database_ids),
         base_model.perm.in_(perms),
         base_model.catalog_perm.in_(catalog_perms),
         base_model.schema_perm.in_(schema_perms),
+        *owner_filters,
         *args,
     )
 

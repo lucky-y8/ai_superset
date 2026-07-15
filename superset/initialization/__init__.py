@@ -197,6 +197,8 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
         from superset.subjects.api import SubjectRestApi
         from superset.tags.api import TagRestApi
         from superset.themes.api import ThemeRestApi
+        from superset.v2.ai_agent.api import AgentTokenRestApi
+        from superset.v2.users.api import UserRegistrationRestApi
         from superset.views.alerts import AlertView, ReportView
         from superset.views.all_entities import TaggedObjectsModelView
         from superset.views.annotations import AnnotationLayerView
@@ -260,6 +262,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
         appbuilder.add_api(ThemeRestApi)
         appbuilder.add_api(CurrentUserRestApi)
         appbuilder.add_api(UserRestApi)
+        appbuilder.add_api(UserRegistrationRestApi)
         appbuilder.add_api(DashboardFilterStateRestApi)
         appbuilder.add_api(DashboardPermalinkRestApi)
         appbuilder.add_api(DashboardRestApi)
@@ -524,6 +527,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             menu_cond=lambda: feature_flag_manager.is_feature_enabled("TAGGING_SYSTEM"),
         )
         appbuilder.add_api(LogRestApi)
+        appbuilder.add_api(AgentTokenRestApi)
         appbuilder.add_api(UserRegistrationsRestAPI)
         appbuilder.add_view(
             ActionLogView,

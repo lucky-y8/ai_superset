@@ -1,0 +1,224 @@
+import os
+import sys
+import time
+import polib
+from openai import OpenAI
+
+# =========================
+# 参数检查
+# =========================
+
+if len(sys.argv) < 3:
+    print("用法:")
+    print("python translate_po.py input.po output.po")
+    sys.exit(1)
+
+INPUT_PO = sys.argv[1]
+OUTPUT_PO = sys.argv[2]
+
+# =========================
+# API 配置
+# =========================
+
+BASE_URL = os.getenv(
+    "OPENAI_BASE_URL",
+    "https://api.deepseek.com"
+)
+
+API_KEY = os.getenv("OPENAI_API_KEY", "sk-bf7f604d412645d4af21d86f6591c892")
+MODEL = os.getenv(
+    "OPENAI_MODEL",
+    "deepseek-chat"
+)
+
+if not API_KEY:
+    raise ValueError("请设置 OPENAI_API_KEY")
+
+client = OpenAI(
+    api_key=API_KEY,
+    base_url=BASE_URL,
+)
+
+# =========================
+# 断点续传
+# =========================
+
+if os.path.exists(OUTPUT_PO):
+    print(f"检测到已有翻译文件: {OUTPUT_PO}")
+    print("继续未完成翻译...\n")
+
+    po = polib.pofile(OUTPUT_PO)
+else:
+    print(f"读取原始文件: {INPUT_PO}\n")
+
+    po = polib.pofile(INPUT_PO)
+
+# =========================
+# 统计
+# =========================
+
+total = len(po)
+translated = 0
+skipped = 0
+failed = 0
+
+# =========================
+# 判断是否需要翻译
+# =========================
+
+
+def need_translate(entry):
+
+    # 已废弃
+    if entry.obsolete:
+        return False
+
+    # fuzzy 先跳过
+    if "fuzzy" in entry.flags:
+        return False
+
+    # 空 msgid
+    if not entry.msgid.strip():
+        return False
+
+    # 已翻译
+    if entry.msgstr.strip():
+        return False
+
+    return True
+
+
+# =========================
+# 翻译函数
+# =========================
+
+def translate_text(text):
+
+    prompt = f"""
+把下面英文翻译成简体中文。
+
+要求：
+1. 只返回翻译结果
+2. 不要解释
+3. 保留变量与占位符
+4. 不要修改 HTML / Markdown / Jinja
+5. 保留换行格式
+6. 软件术语专业化
+7. 保持简洁
+8. 不要翻译:
+   - %s
+   - %(name)s
+   - {{name}}
+   - {{ count }}
+   - HTML 标签
+   - URL
+
+文本：
+{text}
+"""
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": "你是专业的软件国际化翻译助手。"
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0,
+    )
+
+    return response.choices[0].message.content.strip()
+
+
+# =========================
+# 开始翻译
+# =========================
+
+for i, entry in enumerate(po):
+
+    if not need_translate(entry):
+        skipped += 1
+        continue
+
+    text = entry.msgid.strip()
+
+    print("=" * 80)
+    print(f"[{i+1}/{total}]")
+    print("原文:")
+    print(text[:200])
+
+    retry = 0
+
+    while retry < 3:
+
+        try:
+
+            result = translate_text(text)
+
+            print("\n译文:")
+            print(result)
+
+            entry.msgstr = result
+
+            translated += 1
+
+            # 每10条自动保存
+            if translated % 10 == 0:
+
+                po.save(OUTPUT_PO)
+
+                print("\n💾 已自动保存")
+
+            # 防止限流
+            time.sleep(0.5)
+
+            break
+
+        except KeyboardInterrupt:
+
+            print("\n\n用户中断，正在保存...")
+
+            po.save(OUTPUT_PO)
+
+            print("已保存")
+            sys.exit(0)
+
+        except Exception as e:
+
+            retry += 1
+
+            print(f"\n❌ 翻译失败 (重试 {retry}/3)")
+            print(e)
+
+            time.sleep(3)
+
+            if retry >= 3:
+                failed += 1
+
+# =========================
+# 最终保存
+# =========================
+
+po.save(OUTPUT_PO)
+
+# =========================
+# 完成统计
+# =========================
+
+print("\n")
+print("=" * 80)
+print("翻译完成")
+print("=" * 80)
+
+print(f"总条目: {total}")
+print(f"本次新增翻译: {translated}")
+print(f"跳过数量: {skipped}")
+print(f"失败数量: {failed}")
+
+print(f"\n输出文件:")
+print(OUTPUT_PO)

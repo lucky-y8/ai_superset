@@ -72,6 +72,7 @@ class DatabaseFilter(BaseFilter):  # pylint: disable=too-few-public-methods
             or_(
                 self.model.perm.in_(database_perms),
                 self.model.database_name.in_(database_names),
+                self.model.created_by_fk == g.user.id,
             )
         )
 

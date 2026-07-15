@@ -57,6 +57,7 @@ from superset.commands.semantic_layer.update import (
 )
 from superset.constants import MODEL_API_RW_METHOD_PERMISSION_MAP
 from superset.daos.semantic_layer import SemanticLayerDAO
+from superset.databases.filters import DatabaseFilter
 from superset.datasets.schemas import get_delete_ids_schema
 from superset.exceptions import SupersetSecurityException
 from superset.models.core import Database
@@ -1005,6 +1006,11 @@ class SemanticLayerRestApi(BaseSupersetApi):
                     Database.changed_by_fk,
                 )
             )
+            db_q = DatabaseFilter(
+                "id",
+                SQLAInterface(Database),
+            ).apply(db_q, None)
+
             if name_filter:
                 db_q = db_q.filter(Database.database_name.ilike(f"%{name_filter}%"))
             db_items = [("database", obj) for obj in db_q.all()]

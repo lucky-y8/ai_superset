@@ -45,6 +45,7 @@ import ExtensionsStartup from 'src/extensions/ExtensionsStartup';
 import { Splitter } from 'src/components/Splitter';
 import { ChatFloatingHost, ChatPanelHost, useChat } from 'src/core/chat';
 import useStoredSidebarWidth from 'src/components/ResizableSidebar/useStoredSidebarWidth';
+import AgentAssistant from 'src/agent';
 import { RootContextProviders } from './RootContextProviders';
 import { ScrollToTop } from './ScrollToTop';
 
@@ -220,6 +221,7 @@ const App = () => (
     <LocationPathnameLogger />
     <RootContextProviders>
       <AppContent />
+      <AgentAssistant />
       <ToastContainer />
     </RootContextProviders>
   </Router>

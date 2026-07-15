@@ -55,10 +55,39 @@ export const updateRoleName = async (roleId: number, name: string) =>
     jsonPayload: { name },
   });
 
+// ==================== 新增：全局翻译字典 ====================
+let globalTranslationMap: Record<string, string> = {};
+
+/**
+ * 设置全局权限翻译字典
+ */
+export const setPermissionViewTranslations = (
+  translations: Record<string, string>,
+) => {
+  globalTranslationMap = {
+    ...globalTranslationMap,
+    ...translations,
+  };
+};
+
+/**
+ * 获取当前翻译字典
+ */
+export const getPermissionViewTranslations = () => globalTranslationMap;
+
+// 替换原有函数
 export const formatPermissionLabel = (
   permissionName: string,
   viewMenuName: string,
-) => `${permissionName.replace(/_/g, ' ')} ${viewMenuName.replace(/_/g, ' ')}`;
+) => {
+  const key = `${permissionName} ${viewMenuName}`;
+  const translation = globalTranslationMap[key];
+  if (translation) {
+    return translation;
+  }
+  // 回退：原逻辑
+  return `${permissionName.replace(/_/g, ' ')} ${viewMenuName.replace(/_/g, ' ')}`;
+};
 
 type PermissionResult = {
   id: number;
@@ -81,10 +110,16 @@ export const clearPermissionSearchCache = () => {
   permissionSearchCache.clear();
 };
 
+// 在原 fetchPermissionPageRaw 中添加以下代码（通常在响应解析后）
 const fetchPermissionPageRaw = async (queryParams: Record<string, unknown>) => {
   const response = await SupersetClient.get({
     endpoint: `/api/v1/security/permissions-resources/?q=${rison.encode(queryParams)}`,
   });
+
+  if (response.json?.permission_view_i18n) {
+    setPermissionViewTranslations(response.json.permission_view_i18n); // 内部合并
+  }
+
   return {
     data: mapPermissionResults(response.json?.result || []),
     totalCount: response.json?.count ?? 0,

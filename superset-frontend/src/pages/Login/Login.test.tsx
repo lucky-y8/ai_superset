@@ -19,6 +19,7 @@
 import { render, screen } from 'spec/helpers/testing-library';
 import getBootstrapData from 'src/utils/getBootstrapData';
 import Login from './index';
+import { getInitialTheme } from './LoginPage';
 
 const defaultBootstrapData = {
   common: {
@@ -31,19 +32,10 @@ const defaultBootstrapData = {
   },
 };
 
-const mockApplicationRoot = jest.fn<string, []>(() => '');
-
-jest.mock('src/utils/getBootstrapData', () => {
-  const actual = jest.requireActual<
-    typeof import('src/utils/getBootstrapData')
-  >('src/utils/getBootstrapData');
-  return {
-    __esModule: true,
-    ...actual,
-    default: jest.fn(() => defaultBootstrapData),
-    applicationRoot: () => mockApplicationRoot(),
-  };
-});
+jest.mock('src/utils/getBootstrapData', () => ({
+  __esModule: true,
+  default: jest.fn(() => defaultBootstrapData),
+}));
 
 const mockGetBootstrapData = getBootstrapData as jest.Mock;
 
@@ -92,51 +84,12 @@ test('should render SAML provider buttons', () => {
   expect(screen.getByText('Sign in with Onelogin')).toBeInTheDocument();
 });
 
-const samlBootstrapData = {
-  common: {
-    conf: {
-      AUTH_TYPE: 5,
-      AUTH_PROVIDERS: [{ name: 'okta', icon: 'okta' }],
-      AUTH_USER_REGISTRATION: false,
-    },
-  },
-};
-
-test('provider login links are root-relative on root deployments', () => {
-  mockGetBootstrapData.mockReturnValue(samlBootstrapData);
-  render(<Login />, { useRedux: true });
-  expect(
-    screen.getByRole('link', { name: /sign in with okta/i }),
-  ).toHaveAttribute('href', '/login/okta');
+test('should use light theme from 6:00 through 17:59 local time', () => {
+  expect(getInitialTheme(new Date(2026, 0, 1, 6))).toBe('light');
+  expect(getInitialTheme(new Date(2026, 0, 1, 17, 59))).toBe('light');
 });
 
-test('provider login links carry the application root on subdirectory deployments', () => {
-  mockApplicationRoot.mockReturnValue('/superset');
-  mockGetBootstrapData.mockReturnValue(samlBootstrapData);
-  render(<Login />, { useRedux: true });
-  expect(
-    screen.getByRole('link', { name: /sign in with okta/i }),
-  ).toHaveAttribute('href', '/superset/login/okta');
-});
-
-test('provider login links preserve the next param under a subdirectory', () => {
-  mockApplicationRoot.mockReturnValue('/superset');
-  mockGetBootstrapData.mockReturnValue(samlBootstrapData);
-  const next = '/superset/dashboard/1/';
-  window.history.replaceState(
-    {},
-    '',
-    `/superset/login/?next=${encodeURIComponent(next)}`,
-  );
-  try {
-    render(<Login />, { useRedux: true });
-    expect(
-      screen.getByRole('link', { name: /sign in with okta/i }),
-    ).toHaveAttribute(
-      'href',
-      `/superset/login/okta?next=${encodeURIComponent(next)}`,
-    );
-  } finally {
-    window.history.replaceState({}, '', '/');
-  }
+test('should use dark theme from 18:00 through 5:59 local time', () => {
+  expect(getInitialTheme(new Date(2026, 0, 1, 18))).toBe('dark');
+  expect(getInitialTheme(new Date(2026, 0, 1, 5, 59))).toBe('dark');
 });

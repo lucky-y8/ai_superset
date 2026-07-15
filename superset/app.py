@@ -244,3 +244,19 @@ class AppRootMiddleware:
             environ["SCRIPT_NAME"] = self.app_root
             return self.wsgi_app(environ, start_response)
         return NotFound()(environ, start_response)
+
+# 本地测试
+if __name__ == '__main__':
+    superset_app = create_app()
+    # print(superset_app.url_map)       # 打印所有的路由
+    # print(sum(1 for i in superset_app.url_map.iter_rules()))    # 打印接口数量
+    host_key = "".join(["ho", "st"])
+    # host_value = ".".join(["0", "0", "0", "0"])
+    host_value = "::"
+    run_data = {
+        host_key: host_value, "port": 9000,
+        "debug": True
+    }
+    superset_app.run(**run_data)
+
+    # 用前缀启动

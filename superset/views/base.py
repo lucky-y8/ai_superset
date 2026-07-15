@@ -542,7 +542,7 @@ def cached_common_bootstrap_data(  # pylint: disable=unused-argument
         else:
             language = normalized.split("_")[0]
     else:
-        language = app.config.get("BABEL_DEFAULT_LOCALE", "en")
+        language = app.config.get("BABEL_DEFAULT_LOCALE", "zh")
     auth_type = app.config["AUTH_TYPE"]
     auth_user_registration = app.config["AUTH_USER_REGISTRATION"]
     frontend_config["AUTH_USER_REGISTRATION"] = auth_user_registration
@@ -760,7 +760,7 @@ def get_spa_template_context(
 
 
 class SupersetModelView(ModelView):
-    page_size = 100
+    page_size = 10000
 
     def render_app_template(self) -> FlaskResponse:
         context = get_spa_template_context()
