@@ -1,0 +1,63 @@
+"use strict";(globalThis.webpackChunksuperset=globalThis.webpackChunksuperset||[]).push([[5659],{20817(e,t,l){l.r(t),l.d(t,{default:()=>U});var a,i=l(2445),r=l(27124),n=l(73815),s=l(64260),o=l(8563),d=l(66016),u=l(13512),c=l(60685),p=l(7070),h=l(70234),m=l(14328),b=l(79294),y=l(58561),f=l.n(y),g=l(18847),v=l(17437),w=l(85614),x=l(84151),_=l(56030),S=l(65471),F=l(34835),Y=l(80967),k=l(68292),j=l(62858),z=l(72620);let T=[{label:(0,r.t)("Regular"),value:"Regular"},{label:(0,r.t)("Base"),value:"Base"}];var A=((a={}).Regular="Regular",a.Base="Base",a);function C(){return(C=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var l=arguments[t];for(var a in l)Object.prototype.hasOwnProperty.call(l,a)&&(e[a]=l[a])}return e}).apply(this,arguments)}let D=(0,v.AH)`
+  margin: 0;
+
+  .ant-input {
+    margin: 0;
+  }
+`,N=(0,w.styled)(_.aF)`
+  max-width: 1200px;
+  min-width: min-content;
+  width: 100%;
+  .ant-modal-footer {
+    white-space: nowrap;
+  }
+`,R=w.styled.div`
+  ${({theme:e})=>(0,v.AH)`
+    display: flex;
+    flex-direction: column;
+    padding: ${3*e.sizeUnit}px ${4*e.sizeUnit}px
+      ${2*e.sizeUnit}px;
+
+    label,
+    .control-label {
+      display: flex;
+      font-size: ${e.fontSizeSM}px;
+      color: ${e.colorTextLabel};
+      align-items: center;
+    }
+
+    .info-solid-small {
+      vertical-align: middle;
+      padding-bottom: ${e.sizeUnit/2}px;
+    }
+  `}
+`,H=w.styled.div`
+  ${({theme:e})=>(0,v.AH)`
+    display: flex;
+    flex-direction: column;
+    margin: ${e.sizeUnit}px;
+    margin-bottom: ${4*e.sizeUnit}px;
+
+    .input-container {
+      display: flex;
+      align-items: center;
+
+      > div {
+        width: 100%;
+      }
+    }
+
+    input,
+    textarea {
+      flex: 1 1 auto;
+    }
+
+    .required {
+      margin-left: ${e.sizeUnit/2}px;
+      color: ${e.colorErrorText};
+    }
+  `}
+`,M=(0,w.styled)(S.Input.TextArea)`
+  resize: none;
+  margin-top: ${({theme:e})=>e.sizeUnit}px;
+`,O=new Set(["name","group_key","clause","description"]),$=()=>({name:"",filter_type:A.Regular,tables:[],subjects:[],clause:"",group_key:"",description:""}),E=function(e){let{rule:t,addDangerToast:l,addSuccessToast:a,onHide:o,show:d}=e,[u,c]=(0,s.useState)($),[p,h]=(0,s.useState)(!0),m=null!==t,{state:{loading:b,resource:y,error:v},fetchResource:w,createResource:_,updateResource:S,clearError:E}=(0,g.fn)("rowlevelsecurity",(0,r.t)("rowlevelsecurity"),l),B=(e,t)=>{c(l=>C({},l,{[e]:t}))};(0,s.useEffect)(()=>{m?(null==t?void 0:t.id)===void 0||b||v||w(t.id):c($())},[t]),(0,s.useEffect)(()=>{if(y){var e,l;let a;c((l=null!=(e=null==t?void 0:t.id)?e:y.id,a=$(),C({},a,y,{id:l,tables:((e=[])=>e.flatMap(e=>void 0===e.id?[]:{value:e.id,label:e.schema&&e.table_name?`${e.schema}.${e.table_name}`:e.table_name||String(e.id)}))(y.tables),subjects:(0,z.CO)(y.subjects||[])})))}},[y]),(0,s.useEffect)(()=>{var e;(null==u?void 0:u.name)&&(null==u?void 0:u.clause)&&(null==(e=u.tables)?void 0:e.length)?h(!1):h(!0)},[u.name,u.clause,u.tables]);let L=e=>{let t;t=e.name,O.has(t)&&B(e.name,e.value)},U=()=>{E(),c($()),o()},q=(0,s.useMemo)(()=>(e="",t,l)=>{let a=f().encode({filter:e,page:t,page_size:l});return n.A.get({endpoint:`/api/v1/rowlevelsecurity/related/tables?q=${a}`}).then(e=>({data:e.json.result.map(e=>({label:e.text,value:e.value})),totalCount:e.json.count}))},[]);return(0,i.Y)(N,{className:"no-content-padding",responsive:!0,show:d,onHide:U,primaryButtonName:m?(0,r.t)("Save"):(0,r.t)("Add"),disablePrimaryButton:p,onHandledPrimaryAction:()=>{let e=(e=>{let{id:t,tables:l,subjects:a}=e,i=function(e,t){if(null==e)return{};var l,a,i={},r=Object.getOwnPropertyNames(e);for(a=0;a<r.length;a++)!(t.indexOf(l=r[a])>=0)&&Object.prototype.propertyIsEnumerable.call(e,l)&&(i[l]=e[l]);return i}(e,["id","tables","subjects"]);return C({},i,{tables:l.map(e=>e.value),subjects:(0,z.WM)(a)})})(u);m&&u.id?S(u.id,e).then(e=>{e&&(a("Rule updated"),U())}):u&&_(e).then(e=>{e&&(a((0,r.t)("Rule added")),U())})},width:"30%",maxWidth:"1450px",title:(0,i.Y)(x.r,{isEditMode:m,title:m?(0,r.t)("Edit Rule"):(0,r.t)("Add Rule"),"data-test":"rls-modal-title"}),children:(0,i.Y)(R,{children:(0,i.FD)("div",{className:"main-section",children:[(0,i.Y)(H,{children:(0,i.Y)(F.M,{id:"name",name:"name",className:"labeled-input",value:u?u.name:"",required:!0,validationMethods:{onChange:({target:e})=>L(e)},css:D,label:(0,r.t)("Rule Name"),"data-test":"rule-name-test",tooltipText:(0,r.t)("The name of the rule must be unique"),hasTooltip:!0})}),(0,i.FD)(H,{children:[(0,i.FD)("div",{className:"control-label",children:[(0,r.t)("Filter Type")," ",(0,i.Y)(Y.I,{tooltip:(0,r.t)("Regular filters add where clauses to queries if a user matches a subject referenced in the filter. Base filters apply filters to all queries except the subjects defined in the filter, and can be used to define what users can see if no RLS filters within a filter group apply to them.")})]}),(0,i.Y)("div",{className:"input-container",children:(0,i.Y)(k.A,{name:"filter_type",ariaLabel:(0,r.t)("Filter Type"),placeholder:(0,r.t)("Filter Type"),onChange:e=>{B("filter_type",e)},value:null==u?void 0:u.filter_type,options:T,"data-test":"rule-filter-type-test"})})]}),(0,i.FD)(H,{children:[(0,i.FD)("div",{className:"control-label",children:[(0,r.t)("Datasets")," ",(0,i.Y)("span",{className:"required",children:"*"}),(0,i.Y)(Y.I,{tooltip:(0,r.t)("These are the datasets this filter will be applied to.")})]}),(0,i.Y)("div",{className:"input-container",children:(0,i.Y)(j.A,{ariaLabel:(0,r.t)("Tables"),mode:"multiple",onChange:e=>{B("tables",e||[])},value:u.tables,options:q})})]}),(0,i.FD)(H,{children:[(0,i.FD)("div",{className:"control-label",children:[u.filter_type===A.Base?(0,r.t)("Excluded subjects"):(0,r.t)("Subjects")," ",(0,i.Y)(Y.I,{tooltip:(0,r.t)("For regular filters, these are the subjects (users, roles, groups) this filter will be applied to. For base filters, these are the subjects that the filter DOES NOT apply to, e.g. Admin if admin should see all data.")})]}),(0,i.Y)("div",{className:"input-container",children:(0,i.Y)(z.Ay,{relatedUrl:"/api/v1/rowlevelsecurity/related/subjects",ariaLabel:(0,r.t)("Subjects"),onChange:e=>{B("subjects",e||[])},value:(null==u?void 0:u.subjects)||[]})})]}),(0,i.Y)(H,{children:(0,i.Y)(F.M,{id:"group_key",name:"group_key",value:u?u.group_key:"",validationMethods:{onChange:({target:e})=>L(e)},css:D,label:(0,r.t)("Group Key"),hasTooltip:!0,tooltipText:(0,r.t)("Filters with the same group key will be ORed together within the group, while different filter groups will be ANDed together. Undefined group keys are treated as unique groups, i.e. are not grouped together. For example, if a table has three filters, of which two are for departments Finance and Marketing (group key = 'department'), and one refers to the region Europe (group key = 'region'), the filter clause would apply the filter (department = 'Finance' OR department = 'Marketing') AND (region = 'Europe')."),"data-test":"group-key-test"})}),(0,i.Y)(H,{children:(0,i.Y)(F.M,{id:"clause",name:"clause",value:u?u.clause:"",required:!0,validationMethods:{onChange:({target:e})=>L(e)},css:D,label:(0,r.t)("Clause"),hasTooltip:!0,tooltipText:(0,r.t)("This is the condition that will be added to the WHERE clause. For example, to only return rows for a particular client, you might define a regular filter with the clause `client_id = 9`. To display no rows unless a user belongs to a RLS filter role, a base filter can be created with the clause `1 = 0` (always false)."),"data-test":"clause-test"})}),(0,i.FD)(H,{children:[(0,i.Y)("div",{className:"control-label",children:(0,r.t)("Description")}),(0,i.Y)("div",{className:"input-container",children:(0,i.Y)(M,{rows:4,name:"description",value:u?u.description:"",onChange:e=>L(e.target),"data-test":"description-test"})})]})]})})})};var B=l(37254),L=l(16598);l(91681);let U=(0,p.Ay)(function(e){let{addDangerToast:t,addSuccessToast:l,user:a}=e,[p,y]=(0,s.useState)(!1),[v,w]=(0,s.useState)(null),{state:{loading:x,resourceCount:_,resourceCollection:S,bulkSelectEnabled:F},hasPerm:Y,fetchData:k,refreshData:j,toggleBulkSelect:z}=(0,g.RU)("rowlevelsecurity",(0,r.t)("Row Level Security"),t,!0,void 0,void 0,!0),T=(0,s.useCallback)(e=>{w(e),y(!0)},[]),A=(0,s.useCallback)(({id:e,name:t},l,a,i)=>n.A.delete({endpoint:`/api/v1/rowlevelsecurity/${e}`}).then(()=>{l(),a((0,r.t)("Deleted %s",t))},(0,B.JF)(e=>i((0,r.t)("There was an issue deleting %s: %s",t,e)))),[]);function C(){w(null),y(!1),j()}let D=Y("can_write"),N=Y("can_write"),R=Y("can_export"),H=(0,s.useMemo)(()=>[{accessor:"name",Header:(0,r.t)("Name"),size:"xxl",id:"name"},{accessor:"filter_type",Header:(0,r.t)("Filter Type"),size:"lg",id:"filter_type"},{Cell:({row:{original:{subjects:e}}})=>(0,i.Y)(h.z,{subjects:e||[]}),Header:(0,r.t)("Subjects"),accessor:"subjects",size:"xl",id:"subjects",disableSortBy:!0},{accessor:"group_key",Header:(0,r.t)("Group Key"),size:"lg",id:"group_key"},{accessor:"clause",Header:(0,r.t)("Clause"),size:"xl",id:"clause"},{Cell:({row:{original:{changed_on_delta_humanized:e,changed_by:t}}})=>(0,i.Y)(u.UW,{date:e,user:t}),Header:(0,r.t)("Last modified"),accessor:"changed_on_delta_humanized",size:"xl",id:"changed_on_delta_humanized"},{Cell:({row:{original:e}})=>(0,i.FD)("div",{className:"actions",children:[N&&(0,i.Y)(o.m,{id:"edit-action-tooltip",title:(0,r.t)("Edit"),placement:"bottom",children:(0,i.Y)("span",{role:"button",tabIndex:0,className:"action-button",onClick:()=>T(e),children:(0,i.Y)(c.F.EditOutlined,{"data-test":"edit-alt",iconSize:"l"})})}),D&&(0,i.Y)(d.h,{title:(0,r.t)("Please confirm"),description:(0,i.FD)(i.FK,{children:[(0,r.t)("Are you sure you want to delete")," ",(0,i.Y)("b",{children:e.name})]}),onConfirm:()=>A(e,j,l,t),children:e=>(0,i.Y)(o.m,{id:"delete-action-tooltip",title:(0,r.t)("Delete"),placement:"bottom",children:(0,i.Y)("span",{role:"button",tabIndex:0,className:"action-button",onClick:e,children:(0,i.Y)(c.F.DeleteOutlined,{"data-test":"rls-list-trash-icon",iconSize:"l"})})})})]}),Header:(0,r.t)("Actions"),id:"actions",hidden:!N&&!D&&!R,disableSortBy:!0,size:"lg"},{accessor:L.H.ChangedBy,hidden:!0,id:L.H.ChangedBy}],[N,D,R,j,t,l,A,T]),M={title:(0,r.t)("No Rules yet"),image:"filter-results.svg",buttonAction:()=>T(null),buttonIcon:N?(0,i.Y)(c.F.PlusOutlined,{iconSize:"m","data-test":"add-rule-empty"}):void 0,buttonText:N?(0,r.t)("Rule"):null},O=(0,s.useMemo)(()=>[{Header:(0,r.t)("Name"),key:"search",id:"name",input:"search",operator:u.c0.StartsWith,inputName:"rls_list_search"},{Header:(0,r.t)("Filter Type"),key:"filter_type",id:"filter_type",input:"select",operator:u.c0.Equals,unfilteredLabel:(0,r.t)("Any"),selects:[{label:(0,r.t)("Regular"),value:"Regular"},{label:(0,r.t)("Base"),value:"Base"}]},{Header:(0,r.t)("Subject"),key:"subject",id:"subjects",input:"select",operator:u.c0.RelationManyMany,unfilteredLabel:(0,r.t)("All"),fetchSelects:(0,B.eP)("rowlevelsecurity",(0,B.JF)(e=>(0,r.t)("An error occurred while fetching row level security subject values: %s",e)),a),optionFilterProps:m.F,paginate:!0,popupStyle:{minWidth:"300px"}},{Header:(0,r.t)("Group Key"),key:"search",id:"group_key",input:"search",operator:u.c0.StartsWith},{Header:(0,r.t)("Modified by"),key:"changed_by",id:"changed_by",input:"select",operator:u.c0.RelationOneMany,unfilteredLabel:(0,r.t)("All"),fetchSelects:(0,B.u1)("rowlevelsecurity","changed_by",(0,B.JF)(e=>(0,r.t)("An error occurred while fetching dataset datasource values: %s",e)),a),paginate:!0}],[a]),$=[{id:"changed_on_delta_humanized",desc:!0}],U=[];return D&&(U.push({name:(0,r.t)("Bulk select"),buttonStyle:"secondary","data-test":"bulk-select",onClick:z}),U.push({name:(0,r.t)("Rule"),icon:(0,i.Y)(c.F.PlusOutlined,{iconSize:"m","data-test":"add-rule"}),buttonStyle:"primary",onClick:()=>T(null)})),(0,i.FD)(i.FK,{children:[(0,i.Y)(b.A,{name:(0,r.t)("Row Level Security"),buttons:U}),(0,i.Y)(d.h,{title:(0,r.t)("Please confirm"),description:(0,r.t)("Are you sure you want to delete the selected rules?"),onConfirm:function(e){let a=e.map(({id:e})=>e);return n.A.delete({endpoint:`/api/v1/rowlevelsecurity/?q=${f().encode(a)}`}).then(()=>{j(),l((0,r.t)("Deleted"))},(0,B.JF)(e=>t((0,r.t)("There was an issue deleting rules: %s",e))))},children:e=>{let a=[];return D&&a.push({key:"delete",name:(0,r.t)("Delete"),type:"danger",onSelect:e}),(0,i.FD)(i.FK,{children:[(0,i.Y)(E,{rule:v,addDangerToast:t,onHide:C,addSuccessToast:l,show:p}),(0,i.Y)(u.uO,{className:"rls-list-view",bulkActions:a,bulkSelectEnabled:F,disableBulkSelect:z,columns:H,count:_,data:S,emptyState:M,fetchData:k,filters:O,initialSort:$,loading:x,addDangerToast:t,addSuccessToast:l,refreshData:()=>{},pageSize:25})]})}})]})})}}]);

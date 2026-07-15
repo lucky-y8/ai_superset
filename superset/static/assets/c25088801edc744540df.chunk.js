@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunksuperset=globalThis.webpackChunksuperset||[]).push([[1919],{51919(e,t,s){s.r(t),s.d(t,{default:()=>u});var h=s(2445),r=s(25981);function u(e){let{height:t,width:s,echartOptions:u,refs:a}=e;return(0,h.Y)(r.A,{refs:a,height:t,width:s,echartOptions:u})}}}]);

@@ -1,0 +1,19 @@
+"use strict";(globalThis.webpackChunksuperset=globalThis.webpackChunksuperset||[]).push([[1286],{28471(e,t,r){r.d(t,{A:()=>l});var a=r(2445),n=r(64260);function s(){return(s=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var a in r)Object.prototype.hasOwnProperty.call(r,a)&&(e[a]=r[a])}return e}).apply(this,arguments)}function l(e,t){let r=(0,n.forwardRef)(function(r,s){let l=(0,n.useRef)(null),o=(0,n.useRef)(r);(0,n.useLayoutEffect)(()=>{o.current=r}),(0,n.useImperativeHandle)(s,()=>({get container(){var e;return null!=(e=l.current)?e:void 0}}),[]),(0,n.useEffect)(()=>{l.current&&e(l.current,r)}),(0,n.useEffect)(()=>()=>{(null==t?void 0:t.componentWillUnmount)&&t.componentWillUnmount.call({container:void 0,props:o.current})},[]);let{id:c,className:p}=r;return(0,a.Y)("div",{ref:l,id:c,className:p})});return e.displayName&&(r.displayName=e.displayName),e.propTypes&&(r.propTypes=s({},r.propTypes,e.propTypes)),e.defaultProps&&(r.defaultProps=e.defaultProps),r}},71286(e,t,r){r.r(t),r.d(t,{default:()=>h});var a=r(2445),n=r(28471),s=r(85614),l=r(24143),o=r.n(l),c=r(18349),p=r(14230);function u(e,t){let r,{data:a,width:n,height:s,numberFormat:l,colorScheme:u,sliceId:d}=t;e.innerHTML="";let i=o().select(e);i.classed("superset-legacy-chart-chord",!0);let{nodes:h,matrix:g}=a,f=(0,c.gV)(l),v=p.getScale(u),y=Math.min(n,s)/2-10,m=y-24,x=o().svg.arc().innerRadius(m).outerRadius(y),$=o().layout.chord().padding(.04).sortSubgroups(o().descending).sortChords(o().descending),b=o().svg.chord().radius(m),O=i.append("svg").attr("width",n).attr("height",s).on("mouseout",()=>r.classed("fade",!1)).append("g").attr("id","circle").attr("transform",`translate(${n/2}, ${s/2})`);O.append("circle").attr("r",y),$.matrix(g);let T=O.selectAll(".group").data($.groups).enter().append("g").attr("class","group").on("mouseover",(e,t)=>{r.classed("fade",e=>e.source.index!==t&&e.target.index!==t)});T.append("title").text((e,t)=>`${h[t]}: ${f(e.value)}`);let w=T.append("path").attr("id",(e,t)=>`group${t}`).attr("d",x).style("fill",(e,t)=>v(h[t],d)),N=T.append("text").attr("x",6).attr("dy",15);N.append("textPath").attr("xlink:href",(e,t)=>`#group${t}`).text((e,t)=>h[t]),N.filter(function(e,t){return w[0][t].getTotalLength()/2-16<this.getComputedTextLength()}).remove(),(r=O.selectAll(".chord").data($.chords).enter().append("path").attr("class","chord").on("mouseover",e=>{r.classed("fade",t=>t!==e)}).style("fill",e=>v(h[e.source.index],d)).attr("d",b)).append("title").text(e=>`${h[e.source.index]} \u2192 ${h[e.target.index]}: ${f(e.target.value)}
+${h[e.target.index]} \u2192 ${h[e.source.index]}: ${f(e.source.value)}`)}function d(){return(d=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var a in r)Object.prototype.hasOwnProperty.call(r,a)&&(e[a]=r[a])}return e}).apply(this,arguments)}u.displayName="Chord";let i=(0,n.A)(u),h=(0,s.styled)(e=>{let{className:t}=e,r=function(e,t){if(null==e)return{};var r,a,n={},s=Object.getOwnPropertyNames(e);for(a=0;a<s.length;a++)!(t.indexOf(r=s[a])>=0)&&Object.prototype.propertyIsEnumerable.call(e,r)&&(n[r]=e[r]);return n}(e,["className"]);return(0,a.Y)("div",{className:t,children:(0,a.Y)(i,d({},r))})})`
+  ${({theme:e})=>`
+    .superset-legacy-chart-chord svg #circle circle {
+      fill: none;
+      pointer-events: all;
+    }
+    .superset-legacy-chart-chord svg .group path {
+      fill-opacity: 60%;
+    }
+    .superset-legacy-chart-chord svg path.chord {
+      stroke: ${e.colorText};
+      stroke-width: 0.25px;
+    }
+    .superset-legacy-chart-chord svg #circle:hover path.fade {
+      opacity: 10%;
+    }
+  `}
+`}}]);
