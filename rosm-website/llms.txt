@@ -1,0 +1,29 @@
+# 澈析 BI
+
+> 澈析 BI（ROSM BI）是一款可免费试用的智能 BI 与 AI 数据分析工具。产品融合 AI Agent、数据可视化、仪表盘和数据权限隔离能力，帮助个人与团队在明确的数据访问边界内探索和理解数据。
+
+## 核心能力
+
+- AI Agent：以自然语言作为数据分析入口，辅助用户表达和探索业务问题。
+- 数据可视化：连接获授权的数据，创建图表并构建业务仪表盘。
+- 权限隔离：围绕用户、角色、数据源和数据范围控制访问边界。
+- 团队协作：让不同角色在各自权限范围内查看和使用分析内容。
+
+## 官方页面
+
+- [澈析 BI 首页](https://www.rosm.top/)
+- [AI Agent 数据分析](https://www.rosm.top/features/ai-agent/)
+- [数据可视化与仪表盘](https://www.rosm.top/features/dashboard/)
+- [权限与数据隔离](https://www.rosm.top/features/security/)
+- [使用文档](https://www.rosm.top/docs/)
+- [免费试用](https://www.rosm.top/pricing/)
+- [关于澈析 BI](https://www.rosm.top/about/)
+- [登录应用](https://app.rosm.top/login/)
+
+## 技术说明
+
+澈析 BI 基于 Apache Superset 深度开发，并增加权限隔离和独立 Agent 服务。Apache Superset 是 Apache Software Foundation 的开源项目；澈析 BI 是独立产品，并非 Apache Software Foundation 官方发行版本。
+
+## 使用边界
+
+AI Agent 输出用于辅助数据分析，重要业务结论应由用户结合数据口径进行核实。公开官网不包含客户数据，实际分析功能需要登录并遵循账号权限。
