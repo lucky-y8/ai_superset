@@ -1,6 +1,6 @@
 # 澈析 BI
 
-> 澈析 BI（ROSM BI）是一款可免费试用的智能 BI 与 AI 数据分析工具。产品融合 AI Agent、数据可视化、仪表盘和数据权限隔离能力，帮助个人与团队在明确的数据访问边界内探索和理解数据。
+> 澈析 BI（Chexi BI）是一款可免费试用的智能 BI 与 AI 数据分析工具。产品融合 AI Agent、数据可视化、仪表盘和数据权限隔离能力，帮助个人与团队在明确的数据访问边界内探索和理解数据。
 
 ## 核心能力
 
@@ -11,14 +11,14 @@
 
 ## 官方页面
 
-- [澈析 BI 首页](https://www.rosm.top/)
-- [AI Agent 数据分析](https://www.rosm.top/features/ai-agent/)
-- [数据可视化与仪表盘](https://www.rosm.top/features/dashboard/)
-- [权限与数据隔离](https://www.rosm.top/features/security/)
-- [使用文档](https://www.rosm.top/docs/)
-- [免费试用](https://www.rosm.top/pricing/)
-- [关于澈析 BI](https://www.rosm.top/about/)
-- [登录应用](https://app.rosm.top/login/)
+- [澈析 BI 首页](https://www.chexi.tech/)
+- [AI Agent 数据分析](https://www.chexi.tech/features/ai-agent/)
+- [数据可视化与仪表盘](https://www.chexi.tech/features/dashboard/)
+- [权限与数据隔离](https://www.chexi.tech/features/security/)
+- [使用文档](https://www.chexi.tech/docs/)
+- [免费试用](https://www.chexi.tech/pricing/)
+- [关于澈析 BI](https://www.chexi.tech/about/)
+- [登录应用](https://app.chexi.tech/login/)
 
 ## 技术说明
 

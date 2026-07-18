@@ -7,4 +7,4 @@ Allow: /
 User-agent: GPTBot
 Allow: /
 
-Sitemap: https://www.rosm.top/sitemap.xml
+Sitemap: https://www.chexi.tech/sitemap.xml
