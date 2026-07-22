@@ -46,6 +46,7 @@ import { Splitter } from 'src/components/Splitter';
 import { ChatFloatingHost, ChatPanelHost, useChat } from 'src/core/chat';
 import useStoredSidebarWidth from 'src/components/ResizableSidebar/useStoredSidebarWidth';
 import AgentAssistant from 'src/agent';
+import { RoutePaths } from 'src/views/routePaths';
 import { RootContextProviders } from './RootContextProviders';
 import { ScrollToTop } from './ScrollToTop';
 
@@ -143,8 +144,11 @@ const pageScrollContentCss = css`
 // Renders the app shell and picks the scroll model: in chat panel mode <Layout>
 // sits in a Splitter beside the chat panel; otherwise the page scrolls normally.
 const AppContent = () => {
+  const { pathname } = useLocation();
   const isAuthenticated =
     isUser(bootstrapData.user) && !bootstrapData.user.isAnonymous;
+  const showMenu =
+    pathname !== RoutePaths.LOGIN && pathname !== RoutePaths.LOGOUT;
   const chatExtensionsEnabled =
     isFeatureEnabled(FeatureFlag.EnableExtensions) && isAuthenticated;
   const { open: panelOpen, mode, chat } = useChat();
@@ -206,10 +210,12 @@ const AppContent = () => {
 
   return (
     <Flex vertical css={isPanelOpen ? lockedShellCss : pageScrollShellCss}>
-      <Menu
-        data={bootstrapData.common.menu_data}
-        isFrontendRoute={isFrontendRoute}
-      />
+      {showMenu && (
+        <Menu
+          data={bootstrapData.common.menu_data}
+          isFrontendRoute={isFrontendRoute}
+        />
+      )}
       <ExtensionsStartup>{content}</ExtensionsStartup>
     </Flex>
   );

@@ -21,7 +21,7 @@ import getBootstrapData from 'src/utils/getBootstrapData';
 export const AGENT_BASE_URL_STORAGE_KEY = 'superset-agent-base-url';
 export const AGENT_SESSION_STORAGE_KEY = 'superset-agent-assistant-session-v1';
 // export const DEFAULT_AGENT_BASE_URL = 'http://localhost:9003';
-export const DEFAULT_AGENT_BASE_URL = `${window.location.protocol}//${window.location.hostname}:9003`;
+export const DEFAULT_AGENT_BASE_URL = `https://ai.chexi.tech`;
 declare global {
   interface Window {
     SUPERSET_AGENT_BASE_URL?: string;

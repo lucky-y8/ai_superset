@@ -21,6 +21,7 @@ import {
   type FormEvent,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -1484,12 +1485,14 @@ export default function AgentAssistant() {
     persistSession();
   }, [persistSession]);
 
-  useEffect(() => {
-    messagesRef.current?.scrollTo({
-      top: messagesRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  }, [messages]);
+  useLayoutEffect(() => {
+    if (!open || view !== 'chat') return;
+
+    const messagesElement = messagesRef.current;
+    if (messagesElement) {
+      messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+  }, [messages, open, view]);
 
   if (hiddenOnLogin) {
     return null;
